@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小曾 · 三个月计划</title>
+<style>
+  :root{
+    --primary:#6d5ef7; --primary2:#8b5cf6; --purple:#a855f7;
+    --blue:#3b82f6; --green:#22c55e; --green-bg:#ecfdf5;
+    --amber:#f59e0b; --amber-bg:#fffbeb; --red:#ef4444; --red-bg:#fef2f2;
+    --gray:#94a3b8; --gray-bg:#f1f5f9;
+    --text:#1e293b; --text-sub:#64748b; --border:#e2e8f0; --card:#ffffff;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:"Microsoft YaHei","PingFang SC","Segoe UI",sans-serif;
+    background:linear-gradient(160deg,#f6f7ff 0%,#f3f0ff 45%,#f8f5ff 100%);
+    color:var(--text);min-height:100vh;padding:0 0 40px;
+  }
+  .page{max-width:1180px;margin:0 auto;padding:0 20px;}
+
+  .header{
+    background:linear-gradient(120deg,#4338ca 0%,#6d5ef7 40%,#8b5cf6 70%,#a855f7 100%);
+    color:#fff;padding:26px 36px;display:flex;justify-content:space-between;
+    align-items:center;flex-wrap:wrap;gap:12px;
+    box-shadow:0 4px 24px rgba(109,94,247,.35);
+    border-radius:0 0 20px 20px;margin-bottom:20px;
+  }
+  .header h1{font-size:22px;font-weight:700;letter-spacing:.5px;}
+  .header .stamp{font-size:12.5px;opacity:.9;}
+
+  .card{
+    background:var(--card);border-radius:14px;padding:18px 20px;
+    box-shadow:0 2px 10px rgba(109,94,247,.07);border:1px solid var(--border);
+    margin-bottom:16px;
+  }
+  .card h2{font-size:13px;font-weight:600;color:var(--text-sub);margin-bottom:14px;letter-spacing:.5px;}
+
+  /* ===== 顶部大块 Tab ===== */
+  .tabs{
+    display:flex;gap:8px;margin-bottom:16px;
+    background:#fff;padding:6px;border-radius:14px;
+    box-shadow:0 2px 10px rgba(109,94,247,.07);border:1px solid var(--border);
+  }
+  .tabs button{
+    flex:1;padding:13px 10px;border:none;background:transparent;cursor:pointer;
+    font-family:inherit;font-size:15px;font-weight:700;color:var(--text-sub);
+    border-radius:10px;transition:all .18s;letter-spacing:.5px;
+  }
+  .tabs button.on{
+    background:linear-gradient(120deg,#4338ca,#8b5cf6);color:#fff;
+    box-shadow:0 4px 14px rgba(109,94,247,.3);
+  }
+  .tabs button .sub{display:block;font-size:11px;font-weight:500;opacity:.75;margin-top:3px;letter-spacing:0;}
+
+  .pane{display:none;}
+  .pane.on{display:block;}
+
+  /* ===== 进度概览 ===== */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-bottom:16px;}
+  .kpi .label{font-size:12.5px;color:var(--text-sub);margin-bottom:7px;}
+  .kpi .value{
+    font-size:30px;font-weight:700;line-height:1.15;
+    background:linear-gradient(120deg,var(--primary),var(--purple));
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  }
+  .kpi .value.green{background:linear-gradient(120deg,#16a34a,#22c55e);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .kpi .value.amber{background:linear-gradient(120deg,#d97706,#f59e0b);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .kpi .value.red{background:linear-gradient(120deg,#dc2626,#ef4444);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+  .kpi .unit{font-size:15px;font-weight:500;color:var(--text-sub);margin-left:3px;-webkit-text-fill-color:var(--text-sub);}
+  .kpi .hint{font-size:12.5px;color:var(--text-sub);margin-top:7px;}
+
+  .bar{height:9px;background:var(--gray-bg);border-radius:6px;overflow:hidden;margin-top:13px;}
+  .bar > i{display:block;height:100%;border-radius:6px;transition:width .5s;}
+
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:600;}
+  .badge.good{background:var(--green-bg);color:#16a34a;}
+  .badge.warn{background:var(--amber-bg);color:#d97706;}
+  .badge.bad{background:var(--red-bg);color:#dc2626;}
+  .badge.gray{background:var(--gray-bg);color:var(--text-sub);}
+
+  .rows{display:flex;flex-direction:column;gap:10px;}
+  .row{display:flex;justify-content:space-between;align-items:center;font-size:14px;gap:12px;}
+  .row .k{color:var(--text-sub);}
+  .row .v{font-variant-numeric:tabular-nums;font-weight:600;}
+
+  .table-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  th{text-align:left;color:var(--text-sub);font-weight:600;padding:9px 8px;
+     border-bottom:1px solid var(--border);font-size:12px;white-space:nowrap;}
+  td{padding:10px 8px;border-bottom:1px solid #f1f5f9;font-variant-numeric:tabular-nums;}
+  tr.now td{background:linear-gradient(90deg,#f5f3ff,#faf9ff);font-weight:700;}
+  tr.now td:first-child{color:var(--primary);}
+  tr.done td{opacity:.55;}
+
+  .insight-box{
+    background:linear-gradient(120deg,#f5f3ff,#faf9ff);border-left:3px solid var(--primary);
+    border-radius:8px;padding:13px 16px;font-size:13px;color:var(--text-sub);line-height:1.7;margin-top:14px;
+  }
+  .insight-box b{color:var(--primary);}
+
+  /* ============================================================
+     打勾清单
+     ============================================================ */
+  .check-list{display:flex;flex-direction:column;gap:8px;}
+  .chk{
+    display:flex;align-items:flex-start;gap:11px;padding:12px 14px;
+    background:#fbfcff;border:1.5px solid var(--border);border-radius:11px;
+    cursor:pointer;user-select:none;transition:all .16s;
+  }
+  .chk:hover{border-color:#c7bffd;background:#f8f7ff;}
+  .chk .box{
+    flex:0 0 22px;width:22px;height:22px;border-radius:7px;margin-top:1px;
+    border:2px solid #cbd5e1;background:#fff;display:flex;align-items:center;
+    justify-content:center;transition:all .16s;
+  }
+  .chk .box svg{width:14px;height:14px;opacity:0;transition:opacity .16s;}
+  .chk .txt{font-size:14px;line-height:1.5;flex:1;}
+  .chk .txt small{display:block;color:var(--text-sub);font-size:12px;margin-top:3px;}
+  .chk.on{background:linear-gradient(90deg,#f0fdf4,#f7fef9);border-color:#86efac;}
+  .chk.on .box{background:linear-gradient(120deg,#16a34a,#22c55e);border-color:#22c55e;}
+  .chk.on .box svg{opacity:1;}
+  .chk.on .txt{color:#15803d;font-weight:600;}
+
+  .goal-group-title{
+    font-size:12px;color:var(--text-sub);font-weight:600;letter-spacing:.5px;
+    margin:16px 0 9px;
+  }
+  .goal-group-title:first-child{margin-top:0;}
+
+  /* 周选择器 */
+  .wsel{
+    display:flex;gap:7px;overflow-x:auto;padding:4px 2px 10px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .wsel button{
+    flex:0 0 auto;padding:9px 15px;border-radius:10px;border:1.5px solid var(--border);
+    background:#fff;color:var(--text-sub);font-family:inherit;font-size:13px;
+    font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;
+  }
+  .wsel button:hover{border-color:#c7bffd;}
+  .wsel button.on{
+    background:linear-gradient(120deg,#4338ca,#8b5cf6);color:#fff;border-color:transparent;
+    box-shadow:0 3px 12px rgba(109,94,247,.3);
+  }
+  .wsel button .d{display:block;font-size:10.5px;font-weight:500;opacity:.75;margin-top:2px;}
+
+  .weekhead{
+    display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+    background:linear-gradient(120deg,#f5f3ff,#faf9ff);border-radius:11px;
+    padding:13px 16px;margin-bottom:14px;border:1px solid #ede9fe;
+  }
+  .weekhead .t{font-size:16px;font-weight:700;color:var(--primary);}
+  .weekhead .n{font-size:12.5px;color:var(--text-sub);margin-top:4px;}
+
+  footer{text-align:center;color:var(--gray);font-size:11.5px;margin-top:26px;}
+  .reset{
+    background:none;border:none;color:var(--gray);font-size:11.5px;
+    cursor:pointer;text-decoration:underline;font-family:inherit;margin-top:8px;
+  }
+
+  /* ===== 登录门 ===== */
+  #lock{
+    position:fixed;inset:0;z-index:999;display:flex;flex-direction:column;
+    align-items:center;justify-content:center;gap:15px;
+    background:linear-gradient(160deg,#f6f7ff 0%,#f3f0ff 45%,#f8f5ff 100%);
+  }
+  #lock .logo{
+    width:64px;height:64px;border-radius:18px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(120deg,#4338ca,#a855f7);color:#fff;font-size:26px;font-weight:700;
+    box-shadow:0 6px 22px rgba(109,94,247,.35);
+  }
+  #lock h1{font-size:19px;color:var(--text);font-weight:700;}
+  #lock p{font-size:13px;color:var(--text-sub);margin-top:-6px;}
+  #pw{
+    width:270px;padding:13px 16px;font-size:16px;text-align:center;letter-spacing:4px;
+    background:#fff;border:1.5px solid var(--border);border-radius:12px;color:var(--text);outline:none;
+    box-shadow:0 2px 10px rgba(109,94,247,.06);
+  }
+  #pw:focus{border-color:var(--primary);box-shadow:0 0 0 4px rgba(109,94,247,.12);}
+  #go{
+    width:270px;padding:13px;font-size:15px;font-weight:600;cursor:pointer;border:none;border-radius:12px;
+    background:linear-gradient(120deg,#4338ca,#8b5cf6);color:#fff;
+    box-shadow:0 4px 16px rgba(109,94,247,.35);
+  }
+  #go:hover{filter:brightness(1.08);}
+  #err{color:#dc2626;font-size:13px;height:18px;}
+  #app{display:none;}
+
+  @media (max-width: 640px){
+    body{ padding:0 0 24px; }
+    .header{padding:18px 18px 16px;flex-direction:column;align-items:flex-start;
+            gap:6px;border-radius:0 0 16px 16px;margin-bottom:14px;}
+    .header h1{ font-size:19px; }
+    .header .stamp{ font-size:11.5px; opacity:.85; }
+    .page{ padding:0 12px; }
+    .card{ padding:14px 14px; border-radius:12px; }
+    .card h2{ font-size:12px; margin-bottom:11px; }
+    .grid{ grid-template-columns:1fr !important; gap:10px; margin-bottom:10px; }
+    .kpi .value{ font-size:26px; }
+    .kpi .label{ font-size:11.5px; }
+    .kpi .hint{ font-size:11.5px; }
+    .tabs button{ font-size:14px; padding:11px 6px; }
+    .tabs button .sub{ font-size:10px; }
+    .table-wrap{ margin:0 -14px; padding:0 14px; -webkit-overflow-scrolling:touch; }
+    table{ font-size:13px; min-width:100%; }
+    th{ font-size:11px; padding:8px 6px; }
+    td{ padding:9px 6px; }
+    .chk{ padding:11px 12px; gap:10px; }
+    .chk .txt{ font-size:13.5px; }
+    .badge{ font-size:10.5px; padding:2px 8px; }
+    .insight-box{ font-size:12px; padding:11px 13px; line-height:1.65; }
+    footer{ font-size:10.5px; margin-top:18px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="lock">
+  <div class="logo">曾</div>
+  <h1>小曾 · 三个月计划</h1>
+  <p>请输入访问密码</p>
+  <input id="pw" type="password" autocomplete="off" placeholder="••••••••">
+  <button id="go">进入</button>
+  <div id="err"></div>
+</div>
+
+<div id="app">
+  <div class="header">
+    <h1>三个月减脂计划 · 165 → 150 斤</h1>
+    <div class="stamp" id="stamp">—</div>
+  </div>
+
+  <div class="page">
+
+    <!-- 顶部总进度 -->
+    <div class="grid">
+      <div class="card kpi" style="margin-bottom:0;">
+        <div class="label">当前体重</div>
+        <div class="value" id="w-now">82.5<span class="unit">kg</span></div>
+        <div class="hint" id="w-sub">起点 165斤 → 目标 150斤</div>
+        <div class="bar"><i id="w-bar" style="width:0%;background:linear-gradient(90deg,#6d5ef7,#a855f7)"></i></div>
+        <div class="hint" id="w-left"></div>
+      </div>
+
+      <div class="card kpi" style="margin-bottom:0;">
+        <div class="label">整体完成</div>
+        <div class="value green" id="goal-pct">0<span class="unit">%</span></div>
+        <div class="hint" id="goal-sub">6 个大目标</div>
+        <div class="bar"><i id="goal-bar" style="width:0%;background:linear-gradient(90deg,#16a34a,#22c55e)"></i></div>
+      </div>
+
+      <div class="card kpi" style="margin-bottom:0;">
+        <div class="label">本周完成</div>
+        <div class="value amber" id="wk-pct">0<span class="unit">%</span></div>
+        <div class="hint" id="wk-sub">本周 8 项清单</div>
+        <div class="bar"><i id="wk-bar" style="width:0%;background:linear-gradient(90deg,#d97706,#f59e0b)"></i></div>
+      </div>
+    </div>
+
+    <!-- 两大块 Tab -->
+    <div class="tabs">
+      <button id="tab-w" class="on" onclick="switchTab('w')">每周完成<span class="sub">跟着这周走</span></button>
+      <button id="tab-o" onclick="switchTab('o')">整体完成<span class="sub">三个月大目标</span></button>
+    </div>
+
+    <!-- ============ 每周完成 ============ -->
+    <div class="pane on" id="pane-w">
+      <div class="card">
+        <h2>选一周</h2>
+        <div class="wsel" id="wsel"></div>
+        <div class="weekhead">
+          <div>
+            <div class="t" id="wk-title">—</div>
+            <div class="n" id="wk-note">—</div>
+          </div>
+          <div class="badge gray" id="wk-range">—</div>
+        </div>
+        <div class="check-list" id="wk-checks"></div>
+        <div style="text-align:center;">
+          <button class="reset" onclick="resetWeek()">清空本周打勾</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>这周的节奏（每周固定）</h2>
+        <div class="table-wrap">
+          <table id="rhythm-tbl">
+            <thead><tr><th>周几</th><th>做什么</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>13 周全景 · 每周目标体重</h2>
+        <div class="table-wrap">
+          <table id="weeks-tbl">
+            <thead><tr><th>周</th><th>日期</th><th>目标体重</th><th>备注</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 整体完成 ============ -->
+    <div class="pane" id="pane-o">
+      <div class="card">
+        <h2>三个月大目标 · 完成一个勾一个</h2>
+        <div class="check-list" id="goal-checks"></div>
+      </div>
+
+      <div class="card">
+        <h2>训练动作 · 照着做</h2>
+        <div id="workouts"></div>
+      </div>
+
+      <div class="card">
+        <h2>吃法</h2>
+        <div id="diets"></div>
+      </div>
+
+      <div class="card">
+        <h2>米诺地尔 · 时间轴</h2>
+        <div class="table-wrap">
+          <table id="minox-tbl">
+            <thead><tr><th>阶段</th><th>状态</th><th>你该知道的</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>腹肌 · 实话实说的时间表</h2>
+        <div class="table-wrap">
+          <table id="abs-tbl">
+            <thead><tr><th>阶段</th><th>你会看到</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <footer>数据更新：<span id="stamp2">—</span> · 打勾状态存在你这台设备上</footer>
+  </div>
+</div>
+
+<script src="plan.js"></script>
+<script>
+const PWD_HASH = "7dde02ec89464141dce75583abbe3dc2e6e1db16efc75c7e9661c44fb5f20705";
+const SALT = "xiaozeng_rian_2026";
+
+async function sha256(s){
+  const buf = new TextEncoder().encode(s);
+  const d = await crypto.subtle.digest('SHA-256', buf);
+  return Array.from(new Uint8Array(d)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function unlock(){
+  const v = document.getElementById('pw').value;
+  if(!v) return;
+  const h = await sha256(v + SALT);
+  if(h === PWD_HASH){
+    sessionStorage.setItem('zx_ok','1');
+    document.getElementById('lock').style.display='none';
+    document.getElementById('app').style.display='block';
+    renderAll();
+  } else {
+    document.getElementById('err').textContent = '密码不对';
+    document.getElementById('pw').value='';
+  }
+}
+document.getElementById('go').addEventListener('click', unlock);
+document.getElementById('pw').addEventListener('keydown', e=>{ if(e.key==='Enter') unlock(); });
+
+/* ============================================================
+   打勾状态存储
+   ============================================================ */
+const STORE_KEY = 'zx_fitness_checks_v1';
+function loadStore(){
+  try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e){ return {}; }
+}
+function saveStore(s){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(s)); }catch(e){} }
+function isOn(key){ return !!loadStore()[key]; }
+function toggle(key){
+  const s = loadStore();
+  if(s[key]) delete s[key]; else s[key] = 1;
+  saveStore(s);
+}
+/* key 约定：周清单 = "w{周号}:{id}"  大目标 = "goal:{id}" */
+
+const CHECK_SVG = '<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.7L13 4.8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+let CUR_WEEK = 1;
+
+function currentWeekIndex(){
+  // 依今天日期落在哪一周
+  const P = window.PLAN;
+  const start = new Date(P.meta.start + 'T00:00:00');
+  const today = new Date(); today.setHours(0,0,0,0);
+  const days = Math.floor((today - start) / 86400000);
+  if(days < 0) return 0;
+  const idx = Math.floor(days / 7);
+  return Math.max(0, Math.min(P.weeks.length - 1, idx));
+}
+
+function switchTab(which){
+  document.getElementById('tab-w').classList.toggle('on', which==='w');
+  document.getElementById('tab-o').classList.toggle('on', which==='o');
+  document.getElementById('pane-w').classList.toggle('on', which==='w');
+  document.getElementById('pane-o').classList.toggle('on', which==='o');
+}
+
+/* ===== 每周清单 ===== */
+function renderWeeks(){
+  const P = window.PLAN;
+  const box = document.getElementById('wsel');
+  box.innerHTML = '';
+  const nowIdx = currentWeekIndex();
+  P.weeks.forEach((wk, i)=>{
+    const done = P.weekly.weeklyChecks.filter(c=>isOn('w'+wk.w+':'+c.id)).length;
+    const b = document.createElement('button');
+    if(i === CUR_WEEK-1) b.className = 'on';
+    b.innerHTML = 'W'+wk.w + (done===P.weekly.weeklyChecks.length ? ' ✓' : '') +
+                  '<span class="d">' + wk.date + '</span>';
+    b.onclick = ()=>{ CUR_WEEK = wk.w; renderWeeks(); renderWeekChecks(); };
+    if(i === nowIdx && !b.innerHTML.includes('✓')) b.style.boxShadow = '0 0 0 2px #a855f7 inset';
+    box.appendChild(b);
+  });
+}
+
+function renderWeekChecks(){
+  const P = window.PLAN;
+  const wk = P.weeks[CUR_WEEK-1];
+  document.getElementById('wk-title').textContent = 'W' + wk.w + ' · 目标 ' + wk.to.toFixed(1) + 'kg';
+  let note = wk.note || '';
+  document.getElementById('wk-note').textContent = note;
+  const rg = document.getElementById('wk-range');
+  rg.textContent = wk.date;
+  rg.className = 'badge ' + (wk.tag==='surgery' ? 'warn' : wk.tag==='final' ? 'good' : 'gray');
+
+  const list = document.getElementById('wk-checks');
+  list.innerHTML = '';
+  P.weekly.weeklyChecks.forEach(c=>{
+    const key = 'w'+wk.w+':'+c.id;
+    const on = isOn(key);
+    const d = document.createElement('div');
+    d.className = 'chk' + (on ? ' on' : '');
+    d.innerHTML = '<div class="box">'+CHECK_SVG+'</div><div class="txt">'+c.text+'</div>';
+    d.onclick = ()=>{
+      toggle(key);
+      d.classList.toggle('on');
+      renderWeeks(); updateTop();
+    };
+    list.appendChild(d);
+  });
+}
+
+function resetWeek(){
+  const s = loadStore();
+  Object.keys(s).forEach(k=>{ if(k.indexOf('w'+CUR_WEEK+':')===0) delete s[k]; });
+  saveStore(s);
+  renderWeeks(); renderWeekChecks(); updateTop();
+}
+
+/* ===== 整体目标 ===== */
+function renderGoals(){
+  const P = window.PLAN;
+  const list = document.getElementById('goal-checks');
+  list.innerHTML = '';
+  P.goals.forEach(g=>{
+    const key = 'goal:'+g.id;
+    const on = isOn(key);
+    const d = document.createElement('div');
+    d.className = 'chk' + (on ? ' on' : '');
+    d.innerHTML = '<div class="box">'+CHECK_SVG+'</div><div class="txt">'+g.text+
+                  '<small>'+g.note+'</small></div>';
+    d.onclick = ()=>{
+      toggle(key);
+      d.classList.toggle('on');
+      updateTop();
+    };
+    list.appendChild(d);
+  });
+}
+
+/* ===== 顶部进度 ===== */
+function updateTop(){
+  const P = window.PLAN;
+  // 大目标
+  const total = P.goals.length;
+  const done = P.goals.filter(g=>isOn('goal:'+g.id)).length;
+  const pct = Math.round(done/total*100);
+  document.getElementById('goal-pct').innerHTML = pct + '<span class="unit">%</span>';
+  document.getElementById('goal-sub').textContent = done + ' / ' + total + ' 个大目标';
+  document.getElementById('goal-bar').style.width = pct + '%';
+
+  // 本周
+  const t = P.weekly.weeklyChecks.length;
+  const d2 = P.weekly.weeklyChecks.filter(c=>isOn('w'+CUR_WEEK+':'+c.id)).length;
+  const p2 = Math.round(d2/t*100);
+  document.getElementById('wk-pct').innerHTML = p2 + '<span class="unit">%</span>';
+  document.getElementById('wk-sub').textContent = 'W'+CUR_WEEK+'：' + d2 + ' / ' + t + ' 项';
+  document.getElementById('wk-bar').style.width = p2 + '%';
+
+  // 体重
+  const m = P.meta;
+  const span = m.startWeight - m.goalWeight;
+  const el = document.getElementById('w-left');
+  el.innerHTML = '还差 <b style="color:#6d5ef7">' + span.toFixed(1) + ' kg</b> · 13 周平均每周掉 1.15 斤';
+  document.getElementById('w-bar').style.width = '0%';
+}
+
+function renderAll(){
+  const P = window.PLAN;
+  document.getElementById('stamp').textContent = '更新于 ' + P.updatedAt;
+  document.getElementById('stamp2').textContent = P.updatedAt;
+
+  CUR_WEEK = P.weeks[currentWeekIndex()].w;
+
+  // 节奏表
+  const rb = document.querySelector('#rhythm-tbl tbody');
+  rb.innerHTML = '';
+  P.weekly.rhythm.forEach(r=>{
+    rb.insertAdjacentHTML('beforeend',
+      '<tr><td><b>'+r.day+'</b></td><td>'+r.task+'</td></tr>');
+  });
+
+  // 13周表
+  const wb = document.querySelector('#weeks-tbl tbody');
+  wb.innerHTML = '';
+  const nowW = P.weeks[currentWeekIndex()].w;
+  P.weeks.forEach(wk=>{
+    const cls = wk.w === nowW ? 'now' : '';
+    wb.insertAdjacentHTML('beforeend',
+      '<tr class="'+cls+'"><td>W'+wk.w+'</td><td>'+wk.date+'</td>'+
+      '<td>'+wk.to.toFixed(1)+' kg</td><td>'+wk.note+'</td></tr>');
+  });
+
+  // 训练
+  const wo = document.getElementById('workouts');
+  wo.innerHTML = '';
+  ['push','pull','legs','swim'].forEach(k=>{
+    const w = P.workouts[k];
+    let rows = w.moves.map(m=>'<div class="row"><span class="k">'+m[0]+'</span><span class="v">'+m[1]+'</span></div>').join('');
+    wo.insertAdjacentHTML('beforeend',
+      '<div style="margin-bottom:14px;"><div style="font-size:14px;font-weight:700;color:#6d5ef7;margin-bottom:4px;">'+w.name+'</div>'+
+      '<div style="font-size:11.5px;color:#94a3b8;margin-bottom:9px;">'+w.sub+'</div>'+
+      '<div class="rows">'+rows+'</div></div>');
+  });
+
+  // 吃
+  const dd = document.getElementById('diets');
+  dd.innerHTML = '';
+  const dietBlocks = [
+    ['平时 5 天', P.diet.normal, '#6d5ef7'],
+    ['周三 · 轻断食日', P.diet.fast, '#f59e0b'],
+    ['周六 · 放纵餐日', P.diet.cheat, '#22c55e']
+  ];
+  dietBlocks.forEach(b=>{
+    dd.insertAdjacentHTML('beforeend',
+      '<div style="margin-bottom:14px;"><div style="font-size:14px;font-weight:700;color:'+b[2]+';margin-bottom:8px;">'+b[0]+'</div>'+
+      '<div class="rows">'+b[1].map(x=>'<div style="font-size:13.5px;line-height:1.6;color:#475569;">· '+x+'</div>').join('')+'</div></div>');
+  });
+
+  // 米诺
+  const mb = document.querySelector('#minox-tbl tbody');
+  mb.innerHTML = '';
+  P.minox.forEach(x=>{
+    const cls = x.level==='warn' ? 'warn' : x.level==='ok' ? 'good' : 'gray';
+    mb.insertAdjacentHTML('beforeend',
+      '<tr><td>'+x.phase+'</td><td><span class="badge '+cls+'">'+x.state+'</span></td><td>'+x.desc+'</td></tr>');
+  });
+
+  // 腹肌
+  const ab = document.querySelector('#abs-tbl tbody');
+  ab.innerHTML = '';
+  P.abs.forEach(x=>{
+    ab.insertAdjacentHTML('beforeend','<tr><td><b>'+x.phase+'</b></td><td>'+x.you+'</td></tr>');
+  });
+
+  renderWeeks();
+  renderWeekChecks();
+  renderGoals();
+  updateTop();
+}
+
+if(sessionStorage.getItem('zx_ok') === '1'){
+  document.getElementById('lock').style.display='none';
+  document.getElementById('app').style.display='block';
+  renderAll();
+} else {
+  setTimeout(()=>document.getElementById('pw').focus(), 100);
+}
+</script>
+</body>
+</html>
