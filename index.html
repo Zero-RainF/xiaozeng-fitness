@@ -217,14 +217,7 @@
 </head>
 <body>
 
-<div id="lock">
-  <div class="logo">曾</div>
-  <h1>小曾 · 三个月计划</h1>
-  <p>请输入访问密码</p>
-  <input id="pw" type="password" autocomplete="off" placeholder="••••••••">
-  <button id="go">进入</button>
-  <div id="err"></div>
-</div>
+<div id="lock" style="display:none"></div>
 
 <div id="app">
   <div class="header">
@@ -348,35 +341,9 @@
 
 <script src="plan.js"></script>
 <script>
-const PWD_HASH = "7dde02ec89464141dce75583abbe3dc2e6e1db16efc75c7e9661c44fb5f20705";
-const SALT = "xiaozeng_rian_2026";
-
-async function sha256(s){
-  const buf = new TextEncoder().encode(s);
-  const d = await crypto.subtle.digest('SHA-256', buf);
-  return Array.from(new Uint8Array(d)).map(b=>b.toString(16).padStart(2,'0')).join('');
-}
-async function unlock(){
-  const v = document.getElementById('pw').value;
-  if(!v) return;
-  const h = await sha256(v + SALT);
-  if(h === PWD_HASH){
-    sessionStorage.setItem('zx_ok','1');
-    document.getElementById('lock').style.display='none';
-    document.getElementById('app').style.display='block';
-    renderAll();
-  } else {
-    document.getElementById('err').textContent = '密码不对';
-    document.getElementById('pw').value='';
-  }
-}
-document.getElementById('go').addEventListener('click', unlock);
-document.getElementById('pw').addEventListener('keydown', e=>{ if(e.key==='Enter') unlock(); });
-
-/* ============================================================
-   打勾状态存储
-   ============================================================ */
+/* 无密码：直接进入 */
 const STORE_KEY = 'zx_fitness_checks_v1';
+const CHECK_SVG = '<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.7L13 4.8" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 function loadStore(){
   try { return JSON.parse(localStorage.getItem(STORE_KEY) || '{}'); } catch(e){ return {}; }
 }
@@ -595,13 +562,10 @@ function renderAll(){
   updateTop();
 }
 
-if(sessionStorage.getItem('zx_ok') === '1'){
-  document.getElementById('lock').style.display='none';
-  document.getElementById('app').style.display='block';
-  renderAll();
-} else {
-  setTimeout(()=>document.getElementById('pw').focus(), 100);
-}
+/* 无密码：直接渲染 */
+document.getElementById('lock').style.display='none';
+document.getElementById('app').style.display='block';
+renderAll();
 </script>
 </body>
 </html>
