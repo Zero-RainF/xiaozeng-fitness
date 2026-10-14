@@ -394,7 +394,7 @@ const CHECK_SVG = '<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.2 11.7
 let CUR_WEEK = 1;
 
 function currentWeekIndex(){
-  // 依今天日期落在哪一周
+  // 依今天日期落在哪一周；开周前一律算 W1
   const P = window.PLAN;
   const start = new Date(P.meta.start + 'T00:00:00');
   const today = new Date(); today.setHours(0,0,0,0);
@@ -423,8 +423,18 @@ function renderWeeks(){
     if(i === CUR_WEEK-1) b.className = 'on';
     b.innerHTML = 'W'+wk.w + (done===P.weekly.weeklyChecks.length ? ' ✓' : '') +
                   '<span class="d">' + wk.date + '</span>';
-    b.onclick = ()=>{ CUR_WEEK = wk.w; renderWeeks(); renderWeekChecks(); };
-    if(i === nowIdx && !b.innerHTML.includes('✓')) b.style.boxShadow = '0 0 0 2px #a855f7 inset';
+    b.onclick = ()=>{ CUR_WEEK = wk.w; renderWeeks(); renderWeekChecks(); updateTop(); };
+    // 今天所在的周：加个紫点标记（不靠 innerHTML 判断，避免误判）
+    if(i === nowIdx){
+      b.style.borderColor = '#a855f7';
+      if(!b.querySelector('.dot')){
+        const dot = document.createElement('i');
+        dot.className = 'dot';
+        dot.style.cssText = 'position:absolute;top:5px;right:6px;width:6px;height:6px;border-radius:50%;background:#a855f7;display:block;';
+        b.style.position = 'relative';
+        b.appendChild(dot);
+      }
+    }
     box.appendChild(b);
   });
 }
